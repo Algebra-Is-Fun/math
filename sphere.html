@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sphere Calculator</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #1e1e1e;
+      color: #eee;
+      text-align: center;
+      padding: 20px;
+    }
+    input {
+      padding: 10px;
+      width: 300px;
+      font-size: 16px;
+    }
+    .output {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+    .hover-box {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #aaa;
+    }
+    .hover-box span {
+      display: inline-block;
+      margin: 5px;
+      padding: 5px 10px;
+      background: #333;
+      border-radius: 5px;
+      cursor: default;
+    }
+    .hover-box span:hover::after {
+      content: attr(data-desc);
+      display: block;
+      position: absolute;
+      background: #222;
+      color: #fff;
+      padding: 5px;
+      border-radius: 5px;
+      margin-top: 5px;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Sphere Volume Calculator</h1>
+  <input id="commandInput" placeholder="Type a command like /spdpi 6.4 or /help" />
+  <div class="output" id="output"></div>
+  <div class="hover-box">
+    <span data-desc="Sphere with diameter, uses π = 3.14">/spdpi</span>
+    <span data-desc="Sphere with radius, uses π = 3.14">/sprpi</span>
+    <span data-desc="Sphere with diameter, uses real π">/spdac</span>
+    <span data-desc="Sphere with radius, uses real π">/sprac</span>
+    <span data-desc="Show command help">/help</span>
+  </div>
+
+  <script>
+    const input = document.getElementById("commandInput");
+    const output = document.getElementById("output");
+
+    function calculateVolume(radius, useRealPi = false) {
+      const pi = useRealPi ? Math.PI : 3.14;
+      const volume = (4 / 3) * pi * Math.pow(radius, 3);
+      return Math.round(volume * 10) / 10;
+    }
+
+    function handleCommand(cmd) {
+      const parts = cmd.trim().split(" ");
+      const command = parts[0].toLowerCase();
+      const value = parseFloat(parts[1]);
+
+      if (command === "/help" || command === "/?") {
+        return `Available commands:<br>
+        /spdpi [diameter] – Sphere with diameter, π = 3.14<br>
+        /sprpi [radius] – Sphere with radius, π = 3.14<br>
+        /spdac [diameter] – Sphere with diameter, real π<br>
+        /sprac [radius] – Sphere with radius, real π`;
+      }
+
+      if (isNaN(value)) return "Please enter a valid number after the command.";
+
+      switch (command) {
+        case "/spdpi":
+          return `Volume: ${calculateVolume(value / 2)} cubic units`;
+        case "/sprpi":
+          return `Volume: ${calculateVolume(value)} cubic units`;
+        case "/spdac":
+          return `Volume: ${calculateVolume(value / 2, true)} cubic units`;
+        case "/sprac":
+          return `Volume: ${calculateVolume(value, true)} cubic units`;
+        default:
+          return "Unknown command. Type /help for a list.";
+      }
+    }
+
+    input.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        output.innerHTML = handleCommand(input.value);
+        input.value = "";
+      }
+    });
+  </script>
+</body>
+</html>
